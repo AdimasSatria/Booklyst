@@ -3,7 +3,11 @@
 import React, { useState } from "react";
 import { motion } from "motion/react";
 import { useBooks } from "@/context/BookContext";
+<<<<<<< HEAD
 import SafeImage from "@/components/SafeImage";
+=======
+import Image from "next/image";
+>>>>>>> 7e90b690e9b6f811efd1733cc1cfa335796a4ca9
 import { useRouter } from "next/navigation";
 import { Search, MapPin, BookOpen, Repeat } from "lucide-react";
 import { TiltCard } from "@/components/TiltCard";
@@ -23,6 +27,7 @@ const InteractiveText = ({ text, className = "", delayOffset = 0 }: { text: stri
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: delayOffset + (i * 10 + j) * 0.02, duration: 0.5, ease: "easeOut" }}
+<<<<<<< HEAD
                 whileHover={{
                   y: -8,
                   scale: 1.15,
@@ -35,6 +40,20 @@ const InteractiveText = ({ text, className = "", delayOffset = 0 }: { text: stri
                   scale: 0.9,
                   y: 2,
                   transition: { type: 'spring', stiffness: 600, damping: 15 }
+=======
+                whileHover={{ 
+                  y: -8, 
+                  scale: 1.15, 
+                  rotate: rot, 
+                  color: '#8B9A6E', 
+                  filter: 'drop-shadow(0 8px 16px rgba(139, 154, 110, 0.4))', 
+                  transition: { type: 'spring', stiffness: 450, damping: 12 } 
+                }}
+                whileTap={{ 
+                  scale: 0.9, 
+                  y: 2, 
+                  transition: { type: 'spring', stiffness: 600, damping: 15 } 
+>>>>>>> 7e90b690e9b6f811efd1733cc1cfa335796a4ca9
                 }}
               >
                 {char}
@@ -71,17 +90,27 @@ export default function Home() {
   const priceFormat = new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR" });
 
   return (
+<<<<<<< HEAD
     <main className="min-h-screen overflow-x-hidden">
 
       {/* Immersive Dark Hero */}
       <section
+=======
+    <main className="min-h-screen">
+      {/* Immersive Dark Hero */}
+      <section 
+>>>>>>> 7e90b690e9b6f811efd1733cc1cfa335796a4ca9
         className="relative min-h-[600px] pt-32 pb-32 flex items-center justify-center bg-black"
         onMouseMove={handleMouseMove}
         onMouseEnter={() => setIsHovering(true)}
         onMouseLeave={() => setIsHovering(false)}
       >
         {/* Spotlight Overlay */}
+<<<<<<< HEAD
         <div
+=======
+        <div 
+>>>>>>> 7e90b690e9b6f811efd1733cc1cfa335796a4ca9
           className="pointer-events-none absolute inset-0 z-10 transition-opacity duration-300"
           style={{
             opacity: isHovering ? 1 : 0,
@@ -90,18 +119,30 @@ export default function Home() {
         />
 
         <div className="absolute inset-0 z-0">
+<<<<<<< HEAD
           <SafeImage
             src="https://media.quipper.com/media/W1siZiIsIjIwMjIvMTEvMjUvMDcvMjQvMzYvOWQ4NTdlYzgtNTFhMy00OTJkLWFlNGYtOWIyYzczNjYzZWViLyJdLFsicCIsInRodW1iIiwiMTIwMHhcdTAwM2UiXSxbInAiLCJjb252ZXJ0IiwiLWNvbG9yc3BhY2Ugc1JHQiAtc3RyaXAiLHsiZm9ybWF0IjoianBnIn1dXQ.jpg"
             alt="Library"
             fill
             className="object-cover"
+=======
+          <Image 
+            src="https://media.quipper.com/media/W1siZiIsIjIwMjIvMTEvMjUvMDcvMjQvMzYvOWQ4NTdlYzgtNTFhMy00OTJkLWFlNGYtOWIyYzczNjYzZWViLyJdLFsicCIsInRodW1iIiwiMTIwMHhcdTAwM2UiXSxbInAiLCJjb252ZXJ0IiwiLWNvbG9yc3BhY2Ugc1JHQiAtc3RyaXAiLHsiZm9ybWF0IjoianBnIn1dXQ.jpg" 
+            alt="Library" 
+            fill 
+            className="object-cover" 
+>>>>>>> 7e90b690e9b6f811efd1733cc1cfa335796a4ca9
             priority
           />
           {/* Overlay and Gradient fade */}
           <div className="absolute inset-0 bg-black/60" />
           <div className="absolute inset-0 bg-gradient-to-t from-[#F7F2EB] to-transparent" />
         </div>
+<<<<<<< HEAD
 
+=======
+        
+>>>>>>> 7e90b690e9b6f811efd1733cc1cfa335796a4ca9
         <div className="relative z-20 w-full max-w-5xl mx-auto px-6 text-center mt-16">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -111,13 +152,18 @@ export default function Home() {
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white/90 text-sm font-semibold tracking-wide mb-8">
               <MapPin className="w-4 h-4" /> UPN Veteran Jawa Timur
             </div>
+<<<<<<< HEAD
 
+=======
+            
+>>>>>>> 7e90b690e9b6f811efd1733cc1cfa335796a4ca9
             <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight mb-8 font-serif leading-[1.1] cursor-default text-white">
               <InteractiveText text="Koleksi Akademik." />
               <br />
               <InteractiveText text="Diteruskan ke Generasi Berikutnya." className="text-white/80" delayOffset={0.5} />
             </h1>
 
+<<<<<<< HEAD
             {/* Responsivitas Search Bar yang dirapikan */}
             <div className="relative w-full max-w-3xl mx-auto mt-12 mb-8 z-20">
               <div className="absolute left-4 md:left-6 top-1/2 -translate-y-1/2 text-gray-400">
@@ -131,11 +177,27 @@ export default function Home() {
                 className="w-full pl-11 md:pl-14 pr-24 md:pr-32 py-3 md:py-4 rounded-full bg-white/90 backdrop-blur-xl border border-white/40 shadow-2xl text-base md:text-lg focus:outline-none focus:ring-2 focus:ring-[#8B9A6E]/50 text-gray-800 placeholder-gray-500 transition-all text-ellipsis overflow-hidden"
               />
               <button
+=======
+            {/* Redesigned Search Bar */}
+            <div className="relative w-full max-w-3xl mx-auto mt-12 mb-8 z-20">
+              <input 
+                type="text" 
+                placeholder="Ketik judul buku, author..." 
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-6 pr-32 py-4 rounded-full bg-white/90 backdrop-blur-xl border border-white/40 shadow-2xl text-lg focus:outline-none focus:ring-2 focus:ring-[#8B9A6E]/50 text-gray-800 placeholder-gray-500 transition-all"
+              />
+              <button 
+>>>>>>> 7e90b690e9b6f811efd1733cc1cfa335796a4ca9
                 onClick={() => {
                   const el = document.getElementById("katalog");
                   if (el) el.scrollIntoView({ behavior: "smooth" });
                 }}
+<<<<<<< HEAD
                 className="absolute right-1.5 md:right-2 top-1.5 md:top-2 bottom-1.5 md:bottom-2 bg-[#8B9A6E] hover:bg-[#7a885f] text-white px-6 md:px-8 rounded-full font-medium transition-colors text-sm md:text-base"
+=======
+                className="absolute right-2 top-2 bottom-2 bg-[#8B9A6E] hover:bg-[#7a885f] text-white px-8 rounded-full font-medium transition-colors"
+>>>>>>> 7e90b690e9b6f811efd1733cc1cfa335796a4ca9
               >
                 Cari
               </button>
@@ -151,6 +213,7 @@ export default function Home() {
             <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-4">Buy. Read. Resell.</h2>
             <p className="text-brand-text/60 text-lg">Ekosistem sirkular untuk mahasiswa cerdas.</p>
           </div>
+<<<<<<< HEAD
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <TiltCard
@@ -175,6 +238,23 @@ export default function Home() {
               <Repeat className="w-10 h-10 text-neutral-400 mb-6 [transform:translateZ(30px)]" />
               <h3 className="text-xl font-bold mb-3 text-black [transform:translateZ(20px)]">Jual Kembali Cepat</h3>
               <p className="text-neutral-500 leading-relaxed [transform:translateZ(10px)]">Lulus mata kuliah? Jual kembali bukumu dalam 3 klik ke adik tingkat.</p>
+=======
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6" style={{ perspective: "1000px" }}>
+            <TiltCard className="bg-white border border-neutral-200 shadow-sm h-full">
+              <BookOpen className="w-10 h-10 text-neutral-400 mb-6" style={{ transform: "translateZ(30px)" }} />
+              <h3 className="text-xl font-bold mb-3 text-black" style={{ transform: "translateZ(20px)" }}>Koleksi Terverifikasi</h3>
+              <p className="text-neutral-500 leading-relaxed" style={{ transform: "translateZ(10px)" }}>Semua buku difilter sesuai dengan kurikulum aktif UPN Veteran Jawa Timur.</p>
+            </TiltCard>
+            <TiltCard className="bg-[#8B9A6E] shadow-xl md:translate-y-8 h-full">
+              <MapPin className="w-10 h-10 text-white/60 mb-6" style={{ transform: "translateZ(30px)" }} />
+              <h3 className="text-xl font-bold mb-3 text-white" style={{ transform: "translateZ(20px)" }}>COD di Kampus</h3>
+              <p className="text-white/80 leading-relaxed" style={{ transform: "translateZ(10px)" }}>Transaksi aman. Temui penjual langsung di GKB, kantin, atau perpustakaan.</p>
+            </TiltCard>
+            <TiltCard className="bg-white border border-neutral-200 shadow-sm h-full">
+              <Repeat className="w-10 h-10 text-neutral-400 mb-6" style={{ transform: "translateZ(30px)" }} />
+              <h3 className="text-xl font-bold mb-3 text-black" style={{ transform: "translateZ(20px)" }}>Jual Kembali Cepat</h3>
+              <p className="text-neutral-500 leading-relaxed" style={{ transform: "translateZ(10px)" }}>Lulus mata kuliah? Jual kembali bukumu dalam 3 klik ke adik tingkat.</p>
+>>>>>>> 7e90b690e9b6f811efd1733cc1cfa335796a4ca9
             </TiltCard>
           </div>
         </div>
@@ -205,11 +285,19 @@ export default function Home() {
               >
                 <div className="relative aspect-[3/4] w-full bg-brand-secondary rounded-2xl overflow-hidden mb-5 flex items-center justify-center p-6">
                   <div className="relative w-full h-full shadow-lg rounded-sm overflow-hidden group-hover:scale-105 transition-transform duration-700 ease-out">
+<<<<<<< HEAD
                     <SafeImage
+=======
+                    <Image 
+>>>>>>> 7e90b690e9b6f811efd1733cc1cfa335796a4ca9
                       src={book.imageUrl}
                       alt={book.title}
                       fill
                       className="object-cover"
+<<<<<<< HEAD
+=======
+                      referrerPolicy="no-referrer"
+>>>>>>> 7e90b690e9b6f811efd1733cc1cfa335796a4ca9
                     />
                   </div>
                   {/* Hover Overlay Button */}
@@ -219,7 +307,11 @@ export default function Home() {
                     </span>
                   </div>
                 </div>
+<<<<<<< HEAD
 
+=======
+                
+>>>>>>> 7e90b690e9b6f811efd1733cc1cfa335796a4ca9
                 <h3 className="font-bold text-lg leading-tight mb-2 group-hover:text-brand-text/80 transition-colors line-clamp-2">{book.title}</h3>
                 <p className="text-brand-text/60 text-sm mb-4">{book.author}</p>
 
@@ -232,7 +324,11 @@ export default function Home() {
               </motion.div>
             ))}
           </div>
+<<<<<<< HEAD
 
+=======
+          
+>>>>>>> 7e90b690e9b6f811efd1733cc1cfa335796a4ca9
           {filteredBooks.length === 0 && (
             <div className="py-32 text-center bg-brand-surface rounded-3xl mt-8">
               <BookOpen className="w-12 h-12 text-brand-text/30 mx-auto mb-4" />
@@ -244,4 +340,8 @@ export default function Home() {
       </section>
     </main>
   );
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 7e90b690e9b6f811efd1733cc1cfa335796a4ca9
