@@ -1,0 +1,6 @@
+{
+  "name": "Booklyst",
+  "description": "Platform sirkular resmi civitas akademika UPN Veteran Jatim.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
