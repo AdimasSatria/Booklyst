@@ -1,11 +1,13 @@
 "use client";
 
 import { motion, AnimatePresence } from "motion/react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useBooks } from "@/context/BookContext";
 import Image from "next/image";
 import { BookMarked, Wallet, Store, User, X, Clock, Plus, Package, HelpCircle } from "lucide-react";
-import { Book } from "@/types";
+import { Book, Order } from "@/types";
+import { formatPrice } from "@/lib/utils";
+import { useAuth } from "@/context/AuthContext";
 
 // Komponen pembungkus gambar agar otomatis menampilkan ikon "?" jika gambar gagal dimuat/tidak valid
 function SafeImage({ src, alt, ...props }: { src: string; alt: string;[key: string]: any }) {
@@ -32,45 +34,16 @@ function SafeImage({ src, alt, ...props }: { src: string; alt: string;[key: stri
 }
 
 export default function ProfilePage() {
-  const { ownedBooks, listedBooks, activeOrders, resellBook, uploadNewBook } = useBooks();
+  const { ownedBooks, listedBooks, activeOrders, resellBook, uploadNewBook, completeOrder } = useBooks();
+  const { user: authUser } = useAuth();
 
   // Dashboard states
   const [activeTab, setActiveTab] = useState<"owned" | "listed" | "orders">("owned");
   const [resellModalData, setResellModalData] = useState<Book | null>(null);
   const [showUploadModal, setShowUploadModal] = useState(false);
 
-  // State lokal untuk melacak pesanan agar statusnya bisa berubah otomatis setelah 1 menit
-  const [ordersWithStatus, setOrdersWithStatus] = useState<any[]>([]);
-
-  // Sinkronisasi activeOrders dari context dan inisialisasi waktu pesanan jika belum ada
-  useEffect(() => {
-    const initialized = activeOrders.map((order: any) => ({
-      ...order,
-      timestamp: order.timestamp || new Date(order.date).getTime() || Date.now(),
-      currentStatus: (order.timestamp && Date.now() - order.timestamp > 60000) ? "Selesai" : (order.status || "Diproses")
-    }));
-    setOrdersWithStatus(initialized);
-  }, [activeOrders]);
-
-  // Timer untuk mengecek perubahan status otomatis setiap 1 detik
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setOrdersWithStatus((prevOrders) =>
-        prevOrders.map((order) => {
-          if (order.currentStatus === "Selesai") return order;
-          const elapsed = Date.now() - order.timestamp;
-          if (elapsed > 60000) {
-            return { ...order, currentStatus: "Selesai" };
-          }
-          return order;
-        })
-      );
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, []);
-
-  const priceFormat = new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR" });
+  // Pesanan sekarang live dari context — status Selesai dipersist ke localStorage.
+  const ordersWithStatus = activeOrders;
 
   const user = {
     name: "Adimas Satria",
@@ -145,7 +118,14 @@ export default function ProfilePage() {
             <div className="w-20 h-20 md:w-24 md:h-24 bg-neutral-100/50 rounded-full flex items-center justify-center mb-6">
               <User className="w-8 h-8 md:w-10 md:h-10 text-black/60" />
             </div>
-            <h2 className="text-xl md:text-2xl font-bold mb-1">{user.name}</h2>
+            <h2 className="text-xl md:text-2xl font-bold mb-1 flex items-center gap-2">
+              {user.name}
+              {authUser?.isAdmin && (
+                <span className="bg-[#8B9A6E]/15 text-[#6b7a52] text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
+                  Admin
+                </span>
+              )}
+            </h2>
             <p className="text-black/50 font-bold mb-6 font-mono text-xs md:text-sm tracking-widest">{user.npm}</p>
 
             <div className="w-full h-px bg-neutral-100 mb-6" />
@@ -255,7 +235,7 @@ export default function ProfilePage() {
                       <h3 className="font-bold text-base leading-tight mb-1 line-clamp-2">{book.title}</h3>
                       <p className="text-black/50 text-xs mb-3">{book.author}</p>
                       <div className="mt-auto flex items-end justify-between">
-                        <p className="font-bold text-black">{priceFormat.format(book.price)}</p>
+                        <p className="font-bold text-black">{formatPrice(book.price)}</p>
                         <div className="inline-flex items-center gap-1 text-black text-[10px] font-bold bg-[#8B9A6E]/20 px-2 py-1 rounded-md">
                           <Clock className="w-3 h-3" /> Publik
                         </div>
@@ -270,20 +250,31 @@ export default function ProfilePage() {
               ordersWithStatus.length === 0 ? renderEmpty("Tidak ada pesanan aktif.") : (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {ordersWithStatus.map((order) => {
-                    const isDone = order.currentStatus === "Selesai";
+                    const isDone = order.status === "Selesai";
+                    const isPending = order.status === "Menunggu Verifikasi";
                     return (
                       <div key={order.id} className="bg-white rounded-3xl p-5 border border-neutral-200 flex flex-row items-center gap-4 sm:gap-6 shadow-sm">
-                        <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center shrink-0 ${isDone ? "bg-emerald-50 text-emerald-600" : "bg-blue-50 text-blue-600"}`}>
-                          <Package className="w-5 h-5 sm:w-6 sm:h-6" />
+                        <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center shrink-0 ${isDone ? "bg-emerald-50 text-emerald-600" : isPending ? "bg-amber-50 text-amber-600" : "bg-blue-50 text-blue-600"}`}>
+                          {isPending ? <Clock className="w-5 h-5 sm:w-6 sm:h-6" /> : <Package className="w-5 h-5 sm:w-6 sm:h-6" />}
                         </div>
                         <div className="flex-1">
                           <p className="text-[10px] sm:text-xs font-bold text-black/50 mb-1">{order.id} • {new Date(order.date).toLocaleDateString("id-ID")}</p>
                           <h3 className="font-bold text-sm sm:text-base line-clamp-1">{order.book.title}</h3>
                           <p className="text-xs font-medium mt-1 text-black/70">Via {order.paymentMethod.toUpperCase()}</p>
                         </div>
-                        <div className={`px-3 py-1.5 rounded-full font-bold text-[10px] sm:text-xs shrink-0 text-center transition-colors ${isDone ? "bg-emerald-100 text-emerald-700" : "bg-amber-50 text-amber-600"
-                          }`}>
-                          {order.currentStatus}
+                        <div className="flex flex-col items-end gap-2 shrink-0">
+                          <div className={`px-3 py-1.5 rounded-full font-bold text-[10px] sm:text-xs text-center transition-colors ${isDone ? "bg-emerald-100 text-emerald-700" : isPending ? "bg-amber-100 text-amber-700" : "bg-blue-50 text-blue-600"
+                            }`}>
+                            {order.status}
+                          </div>
+                          {!isDone && (
+                            <button
+                              onClick={() => completeOrder(order.id)}
+                              className="text-[10px] sm:text-xs font-bold text-[#6b7a52] hover:underline transition-all"
+                            >
+                              Terima Barang →
+                            </button>
+                          )}
                         </div>
                       </div>
                     );

@@ -2,6 +2,8 @@ import type {Metadata} from 'next';
 import { Inter, Playfair_Display } from "next/font/google";
 import './globals.css';
 import { BookProvider } from "@/context/BookContext";
+import { CartProvider } from "@/context/CartContext";
+import { AuthProvider } from "@/context/AuthContext";
 import Navbar from "@/components/Navbar";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
@@ -26,10 +28,14 @@ export default function RootLayout({children}: {children: React.ReactNode}) {
   return (
     <html lang="id">
       <body className={`${inter.variable} ${playfair.variable} font-sans antialiased text-brand-text bg-brand-surface`} suppressHydrationWarning>
-        <BookProvider>
-          <Navbar />
-          {children}
-        </BookProvider>
+        <AuthProvider>
+          <CartProvider>
+            <BookProvider>
+              <Navbar />
+              {children}
+            </BookProvider>
+          </CartProvider>
+        </AuthProvider>
       </body>
     </html>
   );

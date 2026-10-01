@@ -4,21 +4,31 @@ import { motion, AnimatePresence } from "motion/react";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { BookOpen, Search, User, ChevronRight, Menu, X } from "lucide-react";
+import { BookOpen, Search, User, ChevronRight, Menu, X, ShoppingBag, LogIn, LogOut, ShieldCheck, Store } from "lucide-react";
 import { useBooks } from "@/context/BookContext";
+import { useCart } from "@/context/CartContext";
+import { useAuth } from "@/context/AuthContext";
 import SafeImage from "@/components/SafeImage";
+import CartDrawer from "@/components/cart/CartDrawer";
 
 export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
   const { listedBooks, searchQuery, setSearchQuery, activeFaculty, setActiveFaculty } = useBooks();
+  const { totalItems } = useCart();
+  const { user, isLoggedIn, logout } = useAuth();
+  const isAdmin = !!user?.isAdmin;
 
   const [isMounted, setIsMounted] = useState(false);
   const [hoveredFaculty, setHoveredFaculty] = useState<string | null>(null);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isCartOpen, setIsCartOpen] = useState(false);
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
 
   useEffect(() => {
+    // Sync flag for external system (DOM/SSR-mismatch avoidance), not derived React state.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsMounted(true);
   }, []);
 
@@ -105,14 +115,112 @@ export default function Navbar() {
               </button>
             </div>
 
-            {/* Profile (Desktop Only) */}
-            <Link
-              href="/profile"
-              className="w-10 h-10 rounded-full bg-neutral-100 border border-neutral-200 hidden md:flex items-center justify-center hover:bg-neutral-200 transition-colors text-black shrink-0"
-              title="Profil & Dashboard"
+            {/* Cart (Desktop Only) */}
+            <button
+              onClick={() => setIsCartOpen(true)}
+              className="relative w-10 h-10 rounded-full bg-neutral-100 border border-neutral-200 hidden md:flex items-center justify-center hover:bg-neutral-200 transition-colors text-black shrink-0"
+              title="Keranjang"
             >
-              <User className="w-5 h-5" />
-            </Link>
+              <ShoppingBag className="w-5 h-5" />
+              {totalItems > 0 && (
+                <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] bg-[#8B9A6E] text-white text-[10px] font-bold rounded-full flex items-center justify-center px-1">
+                  {totalItems}
+                </span>
+              )}
+            </button>
+
+            {/* Profile or Login (Desktop Only) */}
+            {isLoggedIn ? (
+              <div className="relative hidden md:block">
+                <button
+                  onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+                  className="w-10 h-10 rounded-full bg-neutral-100 border border-neutral-200 hidden md:flex items-center justify-center hover:bg-neutral-200 transition-colors text-black shrink-0"
+                  title={user?.name}
+                >
+                  <span className="text-sm font-bold">{user?.name?.charAt(0).toUpperCase() || <User className="w-5 h-5" />}</span>
+                </button>
+
+                <AnimatePresence>
+                  {isUserMenuOpen && (
+                    <>
+                      <div
+                        className="fixed inset-0 z-40"
+                        onClick={() => setIsUserMenuOpen(false)}
+                      />
+                      <motion.div
+                        initial={{ opacity: 0, y: -8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -8 }}
+                        transition={{ duration: 0.15 }}
+                        className="absolute right-0 top-full mt-2 w-56 bg-white rounded-2xl border border-neutral-200 shadow-xl py-2 z-50 overflow-hidden"
+                      >
+                        <div className="px-4 py-3 border-b border-neutral-100">
+                          <div className="flex items-center gap-2">
+                            <p className="font-bold text-sm leading-tight">{user?.name}</p>
+                            {isAdmin && (
+                              <span className="bg-[#8B9A6E]/15 text-[#6b7a52] text-[9px] font-bold px-1.5 py-0.5 rounded-full uppercase tracking-wider">
+                                Admin
+                              </span>
+                            )}
+                          </div>
+                          <p className="text-xs text-neutral-500 truncate mt-0.5">{user?.email}</p>
+                        </div>
+                        <button
+                          onClick={() => {
+                            setIsUserMenuOpen(false);
+                            router.push("/profile");
+                          }}
+                          className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-neutral-700 hover:bg-neutral-50 transition-colors"
+                        >
+                          <User className="w-4 h-4" />
+                          Profil & Dashboard
+                        </button>
+                        {isAdmin && (
+                          <button
+                            onClick={() => {
+                              setIsUserMenuOpen(false);
+                              router.push("/admin");
+                            }}
+                            className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-neutral-700 hover:bg-neutral-50 transition-colors"
+                          >
+                            <ShieldCheck className="w-4 h-4" />
+                            Dashboard Admin
+                          </button>
+                        )}
+                        <button
+                          onClick={() => {
+                            setIsUserMenuOpen(false);
+                            router.push("/seller");
+                          }}
+                          className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-neutral-700 hover:bg-neutral-50 transition-colors"
+                        >
+                          <Store className="w-4 h-4" />
+                          Toko Saya
+                        </button>
+                        <button
+                          onClick={() => {
+                            setIsUserMenuOpen(false);
+                            logout();
+                            router.push("/");
+                          }}
+                          className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-red-600 hover:bg-red-50 transition-colors"
+                        >
+                          <LogOut className="w-4 h-4" />
+                          Keluar
+                        </button>
+                      </motion.div>
+                    </>
+                  )}
+                </AnimatePresence>
+              </div>
+            ) : (
+              <Link
+                href="/login"
+                className="hidden md:flex items-center px-5 h-10 rounded-full bg-black text-white text-sm font-bold hover:bg-neutral-800 transition-colors shrink-0"
+              >
+                Masuk
+              </Link>
+            )}
 
             {/* Mobile Menu Toggle (Mobile Only) */}
             <button
@@ -198,9 +306,26 @@ export default function Navbar() {
               <div className="p-6 border-b border-neutral-100 flex flex-col gap-6">
                 <div className="flex items-center justify-between">
                   <span className="font-bold text-lg">Menu</span>
-                  <button onClick={() => setIsMobileMenuOpen(false)} className="p-2 hover:bg-neutral-100 rounded-full -mr-2 transition-colors">
-                    <X className="w-6 h-6" />
-                  </button>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => {
+                        setIsMobileMenuOpen(false);
+                        setIsCartOpen(true);
+                      }}
+                      className="relative p-2 hover:bg-neutral-100 rounded-full transition-colors"
+                      title="Keranjang"
+                    >
+                      <ShoppingBag className="w-5 h-5" />
+                      {totalItems > 0 && (
+                        <span className="absolute top-0.5 right-0.5 min-w-[16px] h-[16px] bg-[#8B9A6E] text-white text-[10px] font-bold rounded-full flex items-center justify-center px-1">
+                          {totalItems}
+                        </span>
+                      )}
+                    </button>
+                    <button onClick={() => setIsMobileMenuOpen(false)} className="p-2 hover:bg-neutral-100 rounded-full -mr-2 transition-colors">
+                      <X className="w-6 h-6" />
+                    </button>
+                  </div>
                 </div>
 
                 {/* Search Bar khusus Mobile di pindah ke sini */}
@@ -248,11 +373,35 @@ export default function Navbar() {
                   <User className="w-5 h-5" />
                   Profil & Dashboard
                 </Link>
+                {isLoggedIn ? (
+                  <button
+                    onClick={() => {
+                      setIsMobileMenuOpen(false);
+                      logout();
+                      router.push("/");
+                    }}
+                    className="flex items-center justify-center gap-2 px-4 py-3.5 rounded-xl bg-red-50 text-red-600 font-bold transition-colors"
+                  >
+                    <LogOut className="w-5 h-5" />
+                    Keluar
+                  </button>
+                ) : (
+                  <Link
+                    href="/login"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="flex items-center justify-center gap-2 px-4 py-3.5 rounded-xl bg-black text-white font-bold transition-colors"
+                  >
+                    <LogIn className="w-5 h-5" />
+                    Masuk / Daftar
+                  </Link>
+                )}
               </div>
             </motion.div>
           </>
         )}
       </AnimatePresence>
+
+      <CartDrawer isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
     </div>
   );
 }
